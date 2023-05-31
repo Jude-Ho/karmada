@@ -13,9 +13,15 @@ import (
 // The scheduler should discard the estimator's result and back-off to rely on other estimator's result.
 const UnauthenticReplica = -1
 
+const (
+	schedulerEstimatorName = "scheduler-estimator"
+	generalEstimatorName   = "general-estimator"
+)
+
 var (
 	replicaEstimators              = map[string]ReplicaEstimator{}
 	unschedulableReplicaEstimators = map[string]UnschedulableReplicaEstimator{}
+	availableReplicaEstimatorNames = []string{schedulerEstimatorName, generalEstimatorName}
 )
 
 // ReplicaEstimator is an estimator which estimates the maximum replicas that can be applied to the target cluster.
@@ -36,4 +42,9 @@ func GetReplicaEstimators() map[string]ReplicaEstimator {
 // GetUnschedulableReplicaEstimators returns all unschedulable replica estimators.
 func GetUnschedulableReplicaEstimators() map[string]UnschedulableReplicaEstimator {
 	return unschedulableReplicaEstimators
+}
+
+// GetAvailableReplicaEstimatorNames returns all replica estimators' name that can be used by client.
+func GetAvailableReplicaEstimatorNames() []string {
+	return availableReplicaEstimatorNames
 }

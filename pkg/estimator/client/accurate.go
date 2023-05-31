@@ -16,8 +16,8 @@ import (
 
 // RegisterSchedulerEstimator will register a SchedulerEstimator.
 func RegisterSchedulerEstimator(se *SchedulerEstimator) {
-	replicaEstimators["scheduler-estimator"] = se
-	unschedulableReplicaEstimators["scheduler-estimator"] = se
+	replicaEstimators[schedulerEstimatorName] = se
+	unschedulableReplicaEstimators[schedulerEstimatorName] = se
 }
 
 type getClusterReplicasFunc func(ctx context.Context, cluster string) (int32, error)

@@ -16,7 +16,7 @@ import (
 
 // GeneralEstimator is the default replica estimator.
 func init() {
-	replicaEstimators["general-estimator"] = NewGeneralEstimator()
+	replicaEstimators[generalEstimatorName] = NewGeneralEstimator()
 }
 
 // GeneralEstimator is a normal estimator in terms of cluster ResourceSummary.

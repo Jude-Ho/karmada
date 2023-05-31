@@ -47,10 +47,16 @@ func calAvailableReplicas(clusters []*clusterv1alpha1.Cluster, spec *workv1alpha
 	estimators := estimatorclient.GetReplicaEstimators()
 	ctx := context.WithValue(context.TODO(), util.ContextKeyObject,
 		fmt.Sprintf("kind=%s, name=%s/%s", spec.Resource.Kind, spec.Resource.Namespace, spec.Resource.Name))
-	for _, estimator := range estimators {
+	for _, estimatorName := range estimatorclient.GetAvailableReplicaEstimatorNames() {
+		estimator, exists := estimators[estimatorName]
+		if !exists {
+			klog.Errorf("Estimator %q not found, skip it", estimatorName)
+			continue
+		}
+
 		res, err := estimator.MaxAvailableReplicas(ctx, clusters, spec.ReplicaRequirements)
 		if err != nil {
-			klog.Errorf("Max cluster available replicas error: %v", err)
+			klog.Errorf("Estimator %q was unable to get max cluster available replicas, error: %v", estimatorName, err)
 			continue
 		}
 		for i := range res {
@@ -61,6 +67,8 @@ func calAvailableReplicas(clusters []*clusterv1alpha1.Cluster, spec *workv1alpha
 				availableTargetClusters[i].Replicas = res[i].Replicas
 			}
 		}
+		// use current estimator result when no error occurs
+		break
 	}
 
 	// In most cases, the target cluster max available replicas should not be MaxInt32 unless the workload is best-effort
